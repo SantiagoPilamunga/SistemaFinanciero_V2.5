@@ -1,58 +1,79 @@
-# CakePHP Application Skeleton
+# Sistema de Gestión de Gastos y Compañías
 
-![Build Status](https://github.com/cakephp/app/actions/workflows/ci.yml/badge.svg?branch=5.x)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
-[![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
+Este es un sistema web robusto desarrollado con **CakePHP 5.3**. El proyecto permite administrar empresas, rastrear gastos asociados y gestionar usuarios mediante un sistema de autenticación seguro.
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 5.x.
+## Características principales
+* **Autenticación Completa:** Registro, Login y Logout con control de acceso mediante Middleware.
+* **Seguridad:** Encriptación de contraseñas mediante `DefaultPasswordHasher`.
+* **Gestión de Sesión:** Navegación dinámica que reconoce la identidad del usuario y permite el cierre de sesión.
+* **Integridad de Datos:** Lógica programada para cerrar la sesión automáticamente si un usuario elimina su propia cuenta.
+* **Arquitectura MVC:** Código organizado y escalable utilizando las convenciones de CakePHP.
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+## Tecnologías utilizadas
+* **Framework:** [CakePHP 5.3](https://cakephp.org/) (Chiles)
+* **Lenguaje:** PHP 8.2+
+* **Servidor Web:** Apache (vía XAMPP)
+* **Base de Datos:** MySQL (Gestionada con MySQL Workbench)
+* **Gestor de Dependencias:** Composer
 
-## Installation
+## Instalación y Configuración
 
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
+Sigue estos pasos para montar el proyecto en tu entorno local:
 
-If Composer is installed globally, run
+1. **Clonar el repositorio:**
+   ```bash
+   git clone (https://github.com/SantiagoPilamunga/SistemaFinanciero_V1.0.git)
 
-```bash
-composer create-project --prefer-dist cakephp/app
+2. Instalación de dependencias
+    Entra a la carpeta del proyecto y descarga las librerías necesarias:
+   ```bash
+    composer install
+
+4. Configuración de la Base de Datos
+    Abre MySQL Workbench y crea un nuevo esquema llamado proyecto_ingenieria.
+
+    Importa el archivo de estructura ubicado en db/database.sql para crear las tablas necesarias.
+
+    En el Panel de Control de XAMPP, asegúrate de tener iniciado el módulo Apache.
+
+5. Conexión al servidor MySQL
+    Localiza el archivo config/app_local.example.php y renómbralo a app_local.php.
+
+    Edita la sección 'Datasources' con tus credenciales de MySQL Workbench:
+
+    ```sql
+    'Datasources' => [
+    'default' => [
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => 'TU_PASSWORD_DE_WORKBENCH',
+        'database' => 'proyecto_ingenieria',
+        ],
+    ],
+    ```
+
+5. Acceso al sistema
+Abre tu navegador y accede a:
+http://localhost/ProyectoIngenieriaWeb/
+
+---
+
+Desarrollo (Bake)
+    Para mantener la consistencia y velocidad del desarrollo, se utilizó la herramienta Bake de CakePHP para generar el andamiaje (scaffolding):
+    
+``` bash
+# Ejemplo de cómo se generaron los CRUDs
+bin/cake bake all Users
+bin/cake bake all Companies
+bin/cake bake all Expenses
 ```
+Nota:Las tablas se ponen en ingles ya que es mas facil para cake.php identificarlas
 
-In case you want to use a custom app dir name (e.g. `/myapp/`):
+Seguridad e Integridad
+Acceso Restringido: Solo las páginas de Login y Registro son accesibles sin autenticación.
 
-```bash
-composer create-project --prefer-dist cakephp/app myapp
-```
+Cierre de sesión automático: El sistema incluye una validación en el controlador de usuarios para detectar si un usuario activo se ha eliminado a sí mismo, destruyendo la sesión para evitar accesos "fantasma".
 
-You can now either use your machine's webserver to view the default home page, or start
-up the built-in webserver with:
 
-```bash
-bin/cake server -p 8765
-```
-
-Then visit `http://localhost:8765` to see the welcome page.
-
-## Demo app
-
-Check out the [5.x-demo branch](https://github.com/cakephp/app/tree/5.x-demo), which contains demo migrations and a seeder.
-See the [README](https://github.com/cakephp/app/blob/5.x-demo/README.md) on how to get it running.
-
-## Update
-
-Since this skeleton is a starting point for your application and various files
-would have been modified as per your needs, there isn't a way to provide
-automated upgrades, so you have to do any updates manually.
-
-## Configuration
-
-Read and edit the environment specific `config/app_local.php` and set up the
-`'Datasources'` and any other configuration relevant for your application.
-Other environment agnostic settings can be changed in `config/app.php`.
-
-## Layout
-
-The app skeleton uses [Milligram](https://milligram.io/) (v1.3) minimalist CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.
+Desarrollo (Bake)
+Para mantener la consistencia y velocidad del desarrollo, se utilizó la herramienta Bake de CakePHP para generar el andamiaje (scaffolding):
