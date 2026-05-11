@@ -1,41 +1,41 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\Expense> $expenses
+ * @var iterable<\App\Model\Entity\Budget> $budgets
  */
 ?>
-<div class="expenses index content">
-    <?= $this->Html->link(__('New Expense'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Expenses') ?></h3>
+<div class="budgets index content">
+    <?= $this->Html->link(__('New Budget'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <h3><?= __('Budgets') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('company_id') ?></th>
                     <th><?= $this->Paginator->sort('category_id') ?></th>
-                    <th><?= $this->Paginator->sort('amount') ?></th>
-                    <th><?= $this->Paginator->sort('expense_date') ?></th>
+                    <th><?= $this->Paginator->sort('amount_limit') ?></th>
+                    <th><?= $this->Paginator->sort('quarter') ?></th>
+                    <th><?= $this->Paginator->sort('year') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($expenses as $expense): ?>
+                <?php foreach ($budgets as $budget): ?>
                 <tr>
-                    <td><?= $this->Number->format($expense->id) ?></td>
-                    <td><?= $expense->hasValue('company') ? $this->Html->link($expense->company->name, ['controller' => 'Companies', 'action' => 'view', $expense->company->id]) : '' ?></td>
-                    <td><?= $this->Number->format($expense->category_id) ?></td>
-                    <td><?= $this->Number->format($expense->amount) ?></td>
-                    <td><?= h($expense->expense_date) ?></td>
+                    <td><?= $this->Number->format($budget->id) ?></td>
+                    <td><?= $budget->hasValue('category') ? $this->Html->link($budget->category->name, ['controller' => 'Categories', 'action' => 'view', $budget->category->id]) : '' ?></td>
+                    <td><?= $this->Number->format($budget->amount_limit) ?></td>
+                    <td><?= $this->Number->format($budget->quarter) ?></td>
+                    <td><?= $this->Number->format($budget->year) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $expense->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $expense->id]) ?>
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $budget->id]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $budget->id]) ?>
                         <?= $this->Form->postLink(
                             __('Delete'),
-                            ['action' => 'delete', $expense->id],
+                            ['action' => 'delete', $budget->id],
                             [
                                 'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $expense->id),
+                                'confirm' => __('Are you sure you want to delete # {0}?', $budget->id),
                             ]
                         ) ?>
                     </td>

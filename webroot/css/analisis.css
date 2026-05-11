@@ -1,0 +1,19 @@
+
+.bg-critico { background-color: #f8d7da !important; color: #721c24; }
+.bg-estable { background-color: #fff3cd !important; color: #856404; }
+.bg-excelente { background-color: #d4edda !important; color: #155724; }
+
+.table-analisis {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.alerta-sugerencia {
+    margin-top: 30px;
+    padding: 20px;
+    border-left: 5px solid #007bff;
+    background: #f1f1f1;
+}

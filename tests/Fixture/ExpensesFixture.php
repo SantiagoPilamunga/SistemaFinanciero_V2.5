@@ -21,10 +21,10 @@ class ExpensesFixture extends TestFixture
             [
                 'id' => 1,
                 'company_id' => 1,
-                'department' => 'Lorem ipsum dolor sit amet',
+                'category_id' => 1,
                 'amount' => 1.5,
                 'description' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-                'expense_date' => '2026-03-30',
+                'expense_date' => '2026-04-18',
             ],
         ];
         parent::init();

@@ -24,7 +24,7 @@
                 <legend><?= __('Edit Expense') ?></legend>
                 <?php
                     echo $this->Form->control('company_id', ['options' => $companies]);
-                    echo $this->Form->control('department');
+                    echo $this->Form->control('category_id');
                     echo $this->Form->control('amount');
                     echo $this->Form->control('description');
                     echo $this->Form->control('expense_date');

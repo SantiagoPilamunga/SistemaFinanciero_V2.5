@@ -23,12 +23,12 @@
                     <td><?= $expense->hasValue('company') ? $this->Html->link($expense->company->name, ['controller' => 'Companies', 'action' => 'view', $expense->company->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Department') ?></th>
-                    <td><?= h($expense->department) ?></td>
-                </tr>
-                <tr>
                     <th><?= __('Id') ?></th>
                     <td><?= $this->Number->format($expense->id) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Category Id') ?></th>
+                    <td><?= $this->Number->format($expense->category_id) ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Amount') ?></th>

@@ -47,6 +47,10 @@ class ExpensesTable extends Table
             'foreignKey' => 'company_id',
             'joinType' => 'INNER',
         ]);
+        $this->belongsTo('Categories', [
+            'foreignKey' => 'category_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -62,10 +66,8 @@ class ExpensesTable extends Table
             ->notEmptyString('company_id');
 
         $validator
-            ->scalar('department')
-            ->maxLength('department', 50)
-            ->requirePresence('department', 'create')
-            ->notEmptyString('department');
+            ->integer('category_id')
+            ->notEmptyString('category_id');
 
         $validator
             ->decimal('amount')
@@ -94,6 +96,7 @@ class ExpensesTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+        $rules->add($rules->existsIn(['category_id'], 'Categories'), ['errorField' => 'category_id']);
 
         return $rules;
     }
