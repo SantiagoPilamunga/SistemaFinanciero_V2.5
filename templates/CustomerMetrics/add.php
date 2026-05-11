@@ -20,7 +20,11 @@
                 <?php
                     echo $this->Form->control('department_id', ['options' => $departments]);
                     echo $this->Form->control('total_customers');
-                    echo $this->Form->control('quarter');
+                    echo $this->Form->control('quarter', [
+                        'type' => 'select',
+                        'options' => [1 => 'Trimestre 1', 2 => 'Trimestre 2', 3 => 'Trimestre 3', 4 => 'Trimestre 4'],
+                        'label' => 'Trimestre'
+                    ]);
                     echo $this->Form->control('year');
                 ?>
             </fieldset>

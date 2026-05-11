@@ -64,12 +64,18 @@ class CustomerMetricsTable extends Table
         $validator
             ->integer('total_customers')
             ->requirePresence('total_customers', 'create')
-            ->notEmptyString('total_customers');
+            ->notEmptyString('total_customers')
+            ->add('total_customers', 'min', [
+                'rule' => ['comparison', '>=', 0]]);
 
         $validator
             ->integer('quarter')
             ->requirePresence('quarter', 'create')
-            ->notEmptyString('quarter');
+            ->notEmptyString('quarter', 'El trimestre es obligatorio')
+            ->add('quarter', 'range', [
+                'rule' => ['range', 1, 4],
+                'message' => 'El trimestre debe ser un valor entre 1 y 4'
+            ]);
 
         $validator
             ->integer('year')

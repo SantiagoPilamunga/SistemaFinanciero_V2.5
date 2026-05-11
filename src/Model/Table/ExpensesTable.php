@@ -72,7 +72,10 @@ class ExpensesTable extends Table
         $validator
             ->decimal('amount')
             ->requirePresence('amount', 'create')
-            ->notEmptyString('amount');
+            ->notEmptyString('amount')
+            ->add('amount', 'positive', [
+                'rule' => 'comparison', 'operator' => '>', 'value' => 0
+            ]);
 
         $validator
             ->scalar('description')

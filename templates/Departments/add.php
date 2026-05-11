@@ -27,24 +27,3 @@
         </div>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('#company-id').change(function() {
-        var companyId = $(this).val();
-        if (companyId) {
-            $.ajax({
-                url: '<?= $this->Url->build(['action' => 'getByCompany']) ?>/' + companyId,
-                type: 'GET',
-                success: function(data) {
-                    $('#department-id').empty(); // Limpiar el dropdown de departamentos
-                    $('#department-id').append('<option value="">Seleccione un departamento</option>');
-                    $.each(data, function(key, value) {
-                        $('#department-id').append('<option value="' + key + '">' + value + '</option>');
-                    });
-                }
-            });
-        }
-    });
-});
-</script>

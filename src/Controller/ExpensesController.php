@@ -55,7 +55,11 @@ class ExpensesController extends AppController
             $this->Flash->error(__('The expense could not be saved. Please, try again.'));
         }
         $companies = $this->Expenses->Companies->find('list', limit: 200)->all();
-        $this->set(compact('expense', 'companies'));
+        // Inicializamos vacíos para el efecto cascada
+        $departments = [];
+        $categories = [];
+        
+        $this->set(compact('expense', 'companies', 'departments', 'categories'));
     }
 
     /**
@@ -99,5 +103,35 @@ class ExpensesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    // Función 1: Obtener departamentos por empresa
+    public function getDepartments($companyId = null)
+    {
+        $this->request->allowMethod(['get','ajax']);
+
+        $departmentsTable = $this->fetchTable('Departments');
+
+        $departments = $departmentsTable
+            ->find('list')
+            ->where(['company_id' => $companyId])
+            ->toArray();
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode($departments));
+    }
+
+    // Función 2: Obtener categorías por departamento
+    public function getCategories($departmentId = null)
+    {
+        $this->request->allowMethod(['get','ajax']);
+
+        $categoriesTable = $this->fetchTable('Categories');
+
+        $categories = $categoriesTable
+            ->find('list')
+            ->where(['department_id' => $departmentId])
+            ->toArray();
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode($categories));
     }
 }

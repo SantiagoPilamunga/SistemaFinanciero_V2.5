@@ -54,8 +54,11 @@ class BudgetsController extends AppController
             }
             $this->Flash->error(__('The budget could not be saved. Please, try again.'));
         }
-        $categories = $this->Budgets->Categories->find('list', limit: 200)->all();
-        $this->set(compact('budget', 'categories'));
+
+        $departments = $this->fetchTable('Departments')->find('list', ['limit' => 200])->all();
+        $categories = [];
+
+        $this->set(compact('budget', 'categories', 'departments'));
     }
 
     /**
@@ -99,5 +102,20 @@ class BudgetsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function getCategories($departmentId = null)
+    {
+        $this->request->allowMethod(['get','ajax']);
+        $categories = $this->fetchTable('Categories')
+            ->find('list', [
+                'keyField' => 'id',
+                'valueField' => 'name'
+            ])
+            ->where(['department_id' => $departmentId])
+            ->toArray();
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode($categories));
     }
 }
