@@ -60,6 +60,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // Ejecuta la carga base de CakePHP
         parent::bootstrap();
 
+        // Forzar al entorno global a reconocer HTTPS detrás del proxy de Back4App
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $_SERVER['HTTPS'] = 'on';
+        }
+        
         // Elimina de forma segura el plugin si estás en producción
         if (!\Cake\Core\Configure::read('debug') && $this->getPlugins()->has('DebugKit')) {
             $this->getPlugins()->remove('DebugKit');
@@ -118,6 +123,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'httponly' => true,
                 'secure' => !Configure::read('debug'), // Si no es modo debug (es producción), activa cookie segura
                 'samesite' => 'Lax',
+                'expiry' => new \DateTime('+1 hour'), // Le da persistencia temporal en el navegador
 
             ]));
 
