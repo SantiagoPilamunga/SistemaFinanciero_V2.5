@@ -443,10 +443,18 @@ return [
      *  - `variablesPanelMaxDepth` - Defines how many levels of nested data should be shown in the variables tab.
      *     Default is 5. WARNING: Increasing the max depth level can lead to an out of memory error.
      */
-    'DebugKit' => [
+
+    //cambio para evitar error debugkit en deploy
+    /*'DebugKit' => [
         'forceEnable' => filter_var(env('DEBUG_KIT_FORCE_ENABLE', false), FILTER_VALIDATE_BOOLEAN),
         'safeTld' => env('DEBUG_KIT_SAFE_TLD', null),
         'ignoreAuthorization' => env('DEBUG_KIT_IGNORE_AUTHORIZATION', false),
+    ],*/
+
+    'DebugKit' => [
+        'forceEnable' => false,
+        'safeTld' => env('DEBUG_KIT_SAFE_TLD', null),
+        'ignoreAuthorization' => true,
     ],
 
     /**
