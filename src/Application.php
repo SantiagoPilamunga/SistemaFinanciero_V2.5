@@ -55,6 +55,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function bootstrap(): void
     {
+        // Forzamos a quitar DebugKit si no estamos en modo debug
+        if (!\Cake\Core\Configure::read('debug')) {
+            $this->getPlugins()->remove('DebugKit');
+        }
+
         $this
         ->addPlugin('Authentication');
         // Call parent to load bootstrap from files.
