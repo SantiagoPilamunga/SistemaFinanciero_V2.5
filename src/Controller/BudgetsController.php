@@ -106,16 +106,21 @@ class BudgetsController extends AppController
 
     public function getCategories($departmentId = null)
     {
-        $this->request->allowMethod(['get','ajax']);
+        // 1. Evitar que CakePHP intente renderizar un archivo .php de vista
+        $this->autoRender = false;
+
+        // Permitir solicitudes estándar GET (el fetch de JS viaja así)
+        $this->request->allowMethod(['get', 'ajax']);
+
+        // 2. Sintaxis correcta de CakePHP 5 usando argumentos nombrados
         $categories = $this->fetchTable('Categories')
-            ->find('list', [
-                'keyField' => 'id',
-                'valueField' => 'name'
-            ])
+            ->find('list', keyField: 'id', valueField: 'name')
             ->where(['department_id' => $departmentId])
             ->toArray();
 
-        return $this->response->withType('application/json')
+        // 3. Retornar la respuesta JSON limpia
+        return $this->response
+            ->withType('application/json')
             ->withStringBody(json_encode($categories));
     }
 }
