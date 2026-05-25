@@ -55,21 +55,23 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function bootstrap(): void
     {
-        // Forzamos a quitar DebugKit si no estamos en modo debug
-        if (!\Cake\Core\Configure::read('debug')) {
+        $this->addPlugin('Authentication');
+
+        // Ejecuta la carga base de CakePHP
+        parent::bootstrap();
+
+        // Elimina de forma segura el plugin si estás en producción
+        if (!\Cake\Core\Configure::read('debug') && $this->getPlugins()->has('DebugKit')) {
             $this->getPlugins()->remove('DebugKit');
         }
 
-        $this
-        ->addPlugin('Authentication');
-        // Call parent to load bootstrap from files.
-        parent::bootstrap();
-
-        
-
-        // By default, does not allow fallback classes.
-        FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
-    }
+        // Solución compatible con todas las versiones de CakePHP 4 y 5
+        $locator = \Cake\ORM\TableRegistry::getTableLocator();
+        if (method_exists($locator, 'allowFallbackClass')) {
+            $locator->allowFallbackClass(false);
+        }
+        \Cake\Datasource\FactoryLocator::add('Table', $locator);
+}
 
     /**
      * Setup the middleware queue your application will use.
