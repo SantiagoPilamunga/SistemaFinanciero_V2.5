@@ -116,6 +116,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
+                'secure' => !Configure::read('debug'), // Si no es modo debug (es producción), activa cookie segura
+                'samesite' => 'Lax',
 
             ]));
 
