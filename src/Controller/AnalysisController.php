@@ -34,6 +34,7 @@ class AnalysisController extends AppController {
                 'name' => $dept->name,
                 'total_spent' => 0,
                 'weighted_score' => 0,
+                'total_budget' => 0,
                 'efficiency_index' => 0,
                 'status' => 'ESTABLE'
             ];
@@ -45,6 +46,12 @@ class AnalysisController extends AppController {
             }
 
             foreach ($dept->categories as $cat) {
+                // 1. SUMAR EL PRESUPUESTO (Budget) de cada categoría
+                foreach ($cat->budgets as $budget) {
+                    $deptData['total_budget'] += (float)$budget->amount_limit;
+                }
+
+                // 2. Sumar los gastos (Expenses)
                 $catSpent = 0;
                 foreach ($cat->expenses as $expense) {
                     // Validación de fecha para que el gasto pertenezca al año seleccionado
@@ -62,8 +69,19 @@ class AnalysisController extends AppController {
                 $deptData['efficiency_index'] = $totalCustomers / ($deptData['weighted_score'] / 100);
             }
 
+            // COMPARACIÓN: Si el gasto real supera el presupuesto planeado
+            $sobregirado = ($deptData['total_spent'] > $deptData['total_budget'] && $deptData['total_budget'] > 0);
+
+            if ($sobregirado || $deptData['efficiency_index'] < 1.5) {
+                $deptData['status'] = 'CRÍTICO';
+            } elseif ($deptData['efficiency_index'] > 3) {
+                $deptData['status'] = 'EXCELENTE';
+            }
+
+            /*
             if ($deptData['efficiency_index'] < 1.5) $deptData['status'] = 'CRÍTICO';
             elseif ($deptData['efficiency_index'] > 3) $deptData['status'] = 'EXCELENTE';
+            */
 
             $results[] = $deptData;
         }

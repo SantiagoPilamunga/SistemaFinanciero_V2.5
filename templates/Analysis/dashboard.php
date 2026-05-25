@@ -29,6 +29,7 @@
                 <th>Gasto Total</th>
                 <th>Índice Eficiencia (IEO)</th>
                 <th>Estado</th>
+                <th>Presupuesto Planeado</th>
             </tr>
         </thead>
         <tbody>
@@ -48,6 +49,7 @@
                 <td>
                     <span class="badge"><?= $res['status'] ?></span>
                 </td>
+                <td>$<?= number_format($res['total_budget'], 2) ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>
