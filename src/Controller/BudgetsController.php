@@ -55,7 +55,7 @@ class BudgetsController extends AppController
             $this->Flash->error(__('The budget could not be saved. Please, try again.'));
         }
 
-        $departments = $this->fetchTable('Departments')->find('list', ['limit' => 200])->all();
+        $departments = $this->fetchTable('Departments')->find('list', limit: 200)->all();
         $categories = [];
 
         $this->set(compact('budget', 'categories', 'departments'));
