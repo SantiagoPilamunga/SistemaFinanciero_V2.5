@@ -73,9 +73,7 @@ class ExpensesTable extends Table
             ->decimal('amount')
             ->requirePresence('amount', 'create')
             ->notEmptyString('amount')
-            ->add('amount', 'positive', [
-                'rule' => 'comparison', 'operator' => '>', 'value' => 0
-            ]);
+            ->greaterThan('amount', 0, 'El monto debe ser mayor a 0');
 
         $validator
             ->scalar('description')

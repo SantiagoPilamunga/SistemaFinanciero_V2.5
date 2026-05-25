@@ -79,10 +79,7 @@ class CategoriesTable extends Table
             ->integer('weight')
             ->requirePresence('weight','create')
             ->notEmptyString('weight', 'El peso es obligatorio')
-            ->add('weight', 'range', [
-                'rule' => ['range', 1, 10],
-                'message' => 'El peso estrategico debe estar entre 1 y 10'
-            ]);
+            ->range('weight', [1, 10], 'El peso estrategico debe estar entre 1 y 10');
 
         return $validator;
     }

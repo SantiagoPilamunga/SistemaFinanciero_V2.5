@@ -70,10 +70,7 @@ class BudgetsTable extends Table
             ->integer('quarter')
             ->requirePresence('quarter', 'create')
             ->notEmptyString('quarter', 'El trimestre es obligatorio')
-            ->add('quarter', 'range', [
-                'rule' => ['range', 1, 4],
-                'message' => 'El trimestre debe ser un valor entre 1 y 4'
-                ]);
+            ->range('quarter', [1, 4], 'El trimestre debe ser un valor entre 1 y 4');
 
         $validator
             ->integer('year')

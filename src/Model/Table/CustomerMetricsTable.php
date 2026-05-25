@@ -65,8 +65,8 @@ class CustomerMetricsTable extends Table
             ->integer('total_customers')
             ->requirePresence('total_customers', 'create')
             ->notEmptyString('total_customers')
-            ->add('total_customers', 'min', [
-                'rule' => ['comparison', '>=', 0]]);
+            ->greaterThanOrEqual('total_customers', 0,
+             'El total de clientes debe ser mayor o igual a 0');
 
         $validator
             ->integer('quarter')
