@@ -113,3 +113,15 @@ El sistema se encuentra completamente desplegado en producción y es accesible d
 *   **URL del Dashboard Core:** `(https://analisisfinanciero-cup3kwqz.b4a.run/)`
 *   **Plataforma de Hosting:** Containers / Web App de Back4app.
 *   **Base de Datos en Producción:** MySQL alojado en clever cloud y conectado a back4app.
+
+# Sistema Financiero - Core MVC Con Principios SOLID y patrones de diseño
+
+Esta es la implementa mejoras arquitectónicas sobre el módulo de análisis financiero.
+
+## Patrones de Diseño Implementados
+* **Singleton (`FinancialAnalyzerService`):** Centraliza los cálculos de índices financieros globales, asegurando el ahorro de recursos de memoria al mantener una sola instancia activa.
+* **Factory Method (`StatusEvaluatorFactory`):** Desacopla la lógica de asignación de estados financieros (`CRÍTICO`, `ESTABLE`, `EXCELENTE`), permitiendo agregar nuevas reglas de negocio sin modificar código base.
+
+## Principios SOLID Aplicados
+* **SRP (Single Responsibility):** Se extrajo la lógica matemática fuera de `AnalysisController`, dejando al controlador únicamente con funciones de flujo de datos.
+* **OCP (Open/Closed):** El sistema de evaluación queda abierto a la extensión mediante la interfaz `StatusEvaluatorInterface` pero cerrado a modificaciones directas.
