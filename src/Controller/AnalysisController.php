@@ -1,12 +1,16 @@
 <?php
+
 namespace App\Controller;
 
 use App\Controller\AppController;
+use App\Service\FinancialAnalyzerService;
+use App\Factory\StatusEvaluatorFactory;
 
-class AnalysisController extends AppController {
-    
-    public function dashboard() {
+class AnalysisController extends AppController
+{
 
+    public function dashboard()
+    {
         $year = $this->request->getQuery('year', date('Y'));
         $quarter = $this->request->getQuery('quarter', 1);
 
@@ -15,12 +19,9 @@ class AnalysisController extends AppController {
         $departments = $departmentsTable->find()
             ->contain([
                 'Categories.Budgets' => function ($q) use ($year, $quarter) {
-                return $q->where(['Budgets.year' => $year, 'Budgets.quarter' => $quarter]);
+                    return $q->where(['Budgets.year' => $year, 'Budgets.quarter' => $quarter]);
                 },
-                'Categories.Expenses' => function ($q) use ($year, $quarter) {
-                    // Filtramos gastos por el rango de fechas del trimestre (Opcional pero recomendado)
-                    return $q; 
-                },
+                'Categories.Expenses',
                 'CustomerMetrics' => function ($q) use ($year, $quarter) {
                     return $q->where(['CustomerMetrics.year' => $year, 'CustomerMetrics.quarter' => $quarter]);
                 }
@@ -28,7 +29,10 @@ class AnalysisController extends AppController {
 
         $results = [];
 
-        // 2. BUCLE ANIDADO NIVEL 1: Departamentos
+        // Invocación de Singleton y Factory Method
+        $analyzer = FinancialAnalyzerService::getInstance();
+        $statusEvaluator = StatusEvaluatorFactory::make('standard');
+
         foreach ($departments as $dept) {
             $deptData = [
                 'name' => $dept->name,
@@ -39,54 +43,38 @@ class AnalysisController extends AppController {
                 'status' => 'ESTABLE'
             ];
 
-            // 3. DINÁMICO: Buscamos la métrica del año y trimestre seleccionado
-            $totalCustomers = 0;
-            if (!empty($dept->customer_metrics)) {
-                $totalCustomers = $dept->customer_metrics[0]->total_customers;
-            }
+            $totalCustomers = !empty($dept->customer_metrics) ? $dept->customer_metrics[0]->total_customers : 0;
 
             foreach ($dept->categories as $cat) {
-                // 1. SUMAR EL PRESUPUESTO (Budget) de cada categoría
                 foreach ($cat->budgets as $budget) {
                     $deptData['total_budget'] += (float)$budget->amount_limit;
                 }
 
-                // 2. Sumar los gastos (Expenses)
+                // 1. Declarar y calcular el gasto específico de ESTA categoría
                 $catSpent = 0;
                 foreach ($cat->expenses as $expense) {
-                    // Validación de fecha para que el gasto pertenezca al año seleccionado
                     if ($expense->expense_date->format('Y') == $year) {
                         $catSpent += (float)$expense->amount;
                     }
                 }
-                
+
+                // 2. Acumular el gasto de la categoría en el total del departamento
                 $deptData['total_spent'] += $catSpent;
+
+                // 3. CORRECCIÓN: Multiplicar solo el gasto de la categoría por su peso
                 $deptData['weighted_score'] += ($catSpent * $cat->weight);
             }
 
-            // 5. Cálculo del IEO con validación de división por cero
-            if ($deptData['weighted_score'] > 0) {
-                $deptData['efficiency_index'] = $totalCustomers / ($deptData['weighted_score'] / 100);
-            }
 
-            // COMPARACIÓN: Si el gasto real supera el presupuesto planeado
-            $sobregirado = ($deptData['total_spent'] > $deptData['total_budget'] && $deptData['total_budget'] > 0);
+            // Aplicación de Singleton para el cálculo
+            $deptData['efficiency_index'] = $analyzer->calculateEfficiency($deptData['weighted_score'], $totalCustomers);
 
-            if ($sobregirado || $deptData['efficiency_index'] < 1.5) {
-                $deptData['status'] = 'CRÍTICO';
-            } elseif ($deptData['efficiency_index'] > 3) {
-                $deptData['status'] = 'EXCELENTE';
-            }
-
-            /*
-            if ($deptData['efficiency_index'] < 1.5) $deptData['status'] = 'CRÍTICO';
-            elseif ($deptData['efficiency_index'] > 3) $deptData['status'] = 'EXCELENTE';
-            */
+            // Aplicación de Factory Method para definir el Estado
+            $deptData['status'] = $statusEvaluator->getStatus($deptData);
 
             $results[] = $deptData;
         }
 
-        // Pasamos el año y trimestre seleccionado a la vista para que el formulario los mantenga
         $this->set(compact('results', 'year', 'quarter'));
     }
 }
