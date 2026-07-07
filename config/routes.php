@@ -57,6 +57,9 @@ return function (RouteBuilder $routes): void {
          */
         $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
+        $builder->connect('/analysis/dashboard-api', ['controller' => 'Analysis', 'action' => 'dashboardApi']);
+
+
         /*
          * ...and connect the rest of 'Pages' controller's URLs.
          */

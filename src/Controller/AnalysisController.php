@@ -5,15 +5,89 @@ namespace App\Controller;
 use App\Controller\AppController;
 use App\Service\FinancialAnalyzerService;
 use App\Factory\StatusEvaluatorFactory;
+use Cake\Event\EventInterface;
 
 class AnalysisController extends AppController
 {
+    /**
+     * CONFIGURACIÓN DE ACCESOS (SOLUCIÓN B - CAKEPHP 5.x)
+     * Se ejecuta antes de cualquier acción del controlador para definir permisos
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
 
+        // Si tu proyecto usa el componente o plugin oficial de Autenticación de CakePHP 5
+        if ($this->components()->has('Authentication')) {
+            $this->Authentication->addUnauthenticatedActions(['dashboardApi']);
+        }
+    }
+
+    /**
+     * MANTENER WEB TRADICIONAL
+     * Renderiza la plantilla HTML clásica de CakePHP (templates/Analysis/dashboard.php)
+     */
     public function dashboard()
     {
+        // 1. Obtener los parámetros de la solicitud
         $year = $this->request->getQuery('year', date('Y'));
         $quarter = $this->request->getQuery('quarter', 1);
 
+        // 2. Ejecutar la lógica de negocio central unificada
+        $results = $this->getDashboardData($year, $quarter);
+
+        // 3. Enviar las variables a la vista tradicional (.php)
+        $this->set(compact('results', 'year', 'quarter'));
+    }
+
+    /**
+     * NUEVO ENDPOINT EXCLUSIVO PARA LA API JSON
+     * Consume el Core financiero y retorna datos procesados para React
+     */
+    public function dashboardApi()
+    {
+       // 1. Desactivar explícitamente el Renderizador Automático de Vistas HTML de CakePHP
+        $this->autoRender = false;
+
+        // 2. CORRECCIÓN DE CORS: Configurar y asignar encabezados globales para React
+        $this->setResponse(
+            $this->getResponse()
+                ->withHeader('Access-Control-Allow-Origin', '*') 
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept')
+        );
+
+        // Responder inmediatamente a peticiones de control preflight (OPTIONS) con estado 200 (Éxito)
+        if ($this->request->is('options')) {
+            return $this->getResponse()->withStatus(200);
+        }
+
+        // 3. Obtener los parámetros de la solicitud API
+        $year = $this->request->getQuery('year', date('Y'));
+        $quarter = $this->request->getQuery('quarter', 1);
+
+        // 4. Reutilizar exactamente la misma lógica matemática del Core financiero
+        $results = $this->getDashboardData($year, $quarter);
+
+        // 5. Retornar el payload JSON estructurado para el frontend de React
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode([
+                'success' => true,
+                'metadata' => [
+                    'year' => (int)$year, 
+                    'quarter' => (int)$quarter
+                ],
+                'data' => $results
+            ]));
+    }
+
+    /**
+     * LÓGICA DE NEGOCIO CENTRALIZADA (CORE)
+     * Reutiliza el procesamiento de datos, patrones de diseño y cálculos SOLID
+     */
+    protected function getDashboardData($year, $quarter)
+    {
         $departmentsTable = $this->fetchTable('Departments');
 
         $departments = $departmentsTable->find()
@@ -65,7 +139,6 @@ class AnalysisController extends AppController
                 $deptData['weighted_score'] += ($catSpent * $cat->weight);
             }
 
-
             // Aplicación de Singleton para el cálculo
             $deptData['efficiency_index'] = $analyzer->calculateEfficiency($deptData['weighted_score'], $totalCustomers);
 
@@ -75,6 +148,6 @@ class AnalysisController extends AppController
             $results[] = $deptData;
         }
 
-        $this->set(compact('results', 'year', 'quarter'));
+        return $results;
     }
 }
